@@ -128,7 +128,9 @@ hh = train_lyrics[<span class="hljs-string">&#x27;Genre&#x27;</span>] == <span c
 <p>From the creator, my colleague Evan Sparks:</p>
 <blockquote>
 <p>I reasoned that given the hard limit of 140 characters for both the model and the code to apply it, I would need a model that was both compact and straightforward to apply. A natural candidate was L1-Regularized Linear Regression AKA Lasso - Lasso has the benefit of encouraging sparsity in the model parameters as well as being straightforward to apply. I sketched out some code for applying my model: </p>
-<p>lambda x: sum([x[i]*w for i,w in model]) &gt; 0</p>
+</blockquote>
+<blockquote>
+<p><code>lambda x: sum([x[i]*w for i,w in model]) &gt; 0</code></p>
 </blockquote>
 <p>which computes the dot product of the sparse model and the feature vector.Given that all the code around &quot;model&quot; would have to be fixed, I reasoned that I had about 100 characters left. I opted for a bit packing scheme which encoded the offset in the feature vector into the highest 9 bits of each unicode character, and the weight into the lowest 7 bits.</p>
 <blockquote>
@@ -246,7 +248,7 @@ triangle(<span class="hljs-number">5</span>) <span class="hljs-comment">#returns
 <td align="center">True</td>
 </tr>
 </tbody></table>
-<p>Feel free to send any questions or comments to <a href="mailto:&#x62;&#x6f;&#x63;&#122;&#97;&#114;&#64;&#98;&#x65;&#114;&#x6b;&#101;&#x6c;&#x65;&#121;&#46;&#101;&#100;&#x75;">&#x62;&#x6f;&#x63;&#122;&#97;&#114;&#64;&#98;&#x65;&#114;&#x6b;&#101;&#x6c;&#x65;&#121;&#46;&#101;&#100;&#x75;</a>.</p>
+<p>Feel free to send any questions or comments to <a href="mailto:&#98;&#111;&#99;&#x7a;&#x61;&#x72;&#64;&#98;&#x65;&#114;&#x6b;&#x65;&#x6c;&#x65;&#x79;&#x2e;&#x65;&#100;&#117;">&#98;&#111;&#99;&#x7a;&#x61;&#x72;&#64;&#98;&#x65;&#114;&#x6b;&#x65;&#x6c;&#x65;&#x79;&#x2e;&#x65;&#100;&#117;</a>.</p>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
