@@ -1,17 +1,16 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
     <title>TWEETIFIERS: Hardcore-est Machine Learning</title>
-    <link type="text/css" rel="stylesheet" href="assets/css/github-markdown.css">
-    <link type="text/css" rel="stylesheet" href="assets/css/pilcrow.css">
-    <link type="text/css" rel="stylesheet" href="assets/css/hljs-github.min.css"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link type="text/css" rel="stylesheet" href="assets/style.css" />
+    <link type="text/css" rel="stylesheet" href="assets/pilcrow.css" />
+    <link type="text/css" rel="stylesheet" href="assets/hljs-github.min.css"/>
   </head>
-  <body>
-    <article class="markdown-body"><p><style TYPE="text/css">
+<body><style TYPE="text/css">
     code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
-</style></p>
+</style>
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
     tex2jax: {
@@ -28,8 +27,8 @@ MathJax.Hub.Queue(function() {
 </script>
 <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-<h2 id="tweetifiers:-hardcore-est-machine-learning"><a class="header-link" href="#tweetifiers:-hardcore-est-machine-learning"></a>TWEETIFIERS: Hardcore-est Machine Learning</h2>
-<h5 id="ross-boczar,-15-march-2016"><a class="header-link" href="#ross-boczar,-15-march-2016"></a>Ross Boczar, 15 March 2016</h5>
+<h2 id="tweetifiers-hardcore-est-machine-learning"><a class="header-link" href="#tweetifiers-hardcore-est-machine-learning"></a>TWEETIFIERS: Hardcore-est Machine Learning</h2>
+<h5 id="ross-boczar-15-march-2016"><a class="header-link" href="#ross-boczar-15-march-2016"></a>Ross Boczar, 15 March 2016</h5>
 <p>This past fall, I was a TA for the world&#39;s first (to my knowledge) major-agnostic data science course, UC Berkeley&#39;s <a href="http:/data8.org/fa15/">STAT/CS94</a> (now listed as <a href="https://data-8.appspot.com/sp16/course">STAT/CS C8</a>). From the course website:</p>
 <blockquote>
 <p>Foundations of Data Science combines three perspectives: inferential thinking, computational thinking, and real-world relevance. Given data arising from some real-world phenomenon, how does one analyze that data so as to understand that phenomenon? The course teaches critical concepts and skills in computer programming and statistical inference, in conjunction with hands-on analysis of real-world datasets, including economic data, document collections, geographical data, and social networks. It delves into social issues surrounding data analysis such as privacy and design.</p>
@@ -57,27 +56,27 @@ MathJax.Hub.Queue(function() {
 <li>Only base Python3 or base <a href="http://www.numpy.org">NumPy</a> could be used at test time (though the staff used <code>scikit-learn</code> and other packages to train or optimize some of the classifiers offline).</li>
 </ol>
 <p>With these constraints in place, we set off to try to cram as much prediction power as we could into a Tweet.</p>
-<h3 id="a-key-idea:-unicode-models"><a class="header-link" href="#a-key-idea:-unicode-models"></a>A Key Idea: Unicode Models</h3>
+<h3 id="a-key-idea-unicode-models"><a class="header-link" href="#a-key-idea-unicode-models"></a>A Key Idea: Unicode Models</h3>
 <p>The main difficulty in creating these &quot;Tweetifiers&quot; was point number 2 above; namely, fitting the entire model inside the Tweet. Fortunately, Python3 comes with native Unicode support. I&#39;m still fuzzy on the encoding/decoding details, but for my naive purposes it meant that I can represent integers less than <code>0x110000</code> with a single character, and convert back and forth between integers and characters with the built-in <code>chr()</code> and <code>ord()</code> functions.</p>
 <p>However, I had some trouble with storing large numbers as strings directly using the Python <code>struct</code> package (again, fuzzy on the encoding details), but <a href="http://stackoverflow.com/a/777774">this StackOverflow answer</a> provided some nice functions to do what I wanted:</p>
 <pre class="hljs"><code>N = <span class="hljs-number">20</span> <span class="hljs-comment">#How many bits per character</span>
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">num_to_bytes</span><span class="hljs-params">(num)</span>:</span>
-    bytes = []
-    num = abs(num)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">num_to_bytes</span>(<span class="hljs-params">num</span>):</span>
+    <span class="hljs-built_in">bytes</span> = []
+    num = <span class="hljs-built_in">abs</span>(num)
     <span class="hljs-keyword">while</span> num &gt; <span class="hljs-number">0</span>:
-        bytes.append(chr(num % <span class="hljs-number">2</span>**N))
+        <span class="hljs-built_in">bytes</span>.append(<span class="hljs-built_in">chr</span>(num % <span class="hljs-number">2</span>**N))
         num &gt;&gt;= N
-    <span class="hljs-keyword">return</span> <span class="hljs-string">''</span>.join(reversed(bytes))
+    <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;&#x27;</span>.join(<span class="hljs-built_in">reversed</span>(<span class="hljs-built_in">bytes</span>))
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">bytes_to_num</span><span class="hljs-params">(bytes)</span>:</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">bytes_to_num</span>(<span class="hljs-params"><span class="hljs-built_in">bytes</span></span>):</span>
     num = <span class="hljs-number">0</span>
-    <span class="hljs-keyword">for</span> byte <span class="hljs-keyword">in</span> bytes:
+    <span class="hljs-keyword">for</span> byte <span class="hljs-keyword">in</span> <span class="hljs-built_in">bytes</span>:
         num &lt;&lt;= N
-        num += ord(byte)
+        num += <span class="hljs-built_in">ord</span>(byte)
     <span class="hljs-keyword">return</span> num
 <span class="hljs-comment">#Example</span>
 x = <span class="hljs-number">3</span>**<span class="hljs-number">333</span>    
-x_as_string = num_to_bytes(x)[::<span class="hljs-number">-1</span>]</code></pre><p>Note that most times we would like the lower-order bits to come first in the string, as iterating from low to high bits was usually more efficient for code golfing purposes.</p>
+x_as_string = num_to_bytes(x)[::-<span class="hljs-number">1</span>]</code></pre><p>Note that most times we would like the lower-order bits to come first in the string, as iterating from low to high bits was usually more efficient for code golfing purposes.</p>
 <p>Since $\log_2$(<code>0b110000</code>) is a little more than 20, it means that with this encoding, our Tweet can carry $20\cdot 140 = 2800$ bits of information. Obviously, the practical limit for our model is much less since we need to include syntax and the testing logic as well. </p>
 <p>Many of the staff tweet classifiers had to explore the tradeoff between expressiveness (more characters devoted to code) and model complexity. There was often another tradeoff between bits of precision used to specify constants (say, feature weights) and the number of constants you could fit in the model. Having to trade apples for oranges and testing out different configurations was really interesting--for example is a <code>np.tanh()</code> call worth 9 fewer features in your model?</p>
 <h3 id="competition-results"><a class="header-link" href="#competition-results"></a>Competition Results</h3>
@@ -98,60 +97,64 @@ x_as_string = num_to_bytes(x)[::<span class="hljs-number">-1</span>]</code></pre
 <li>Due to a bug, we didn&#39;t prevent splitting artists across training and holdout sets. Meaning, the two sets should have been a partition of artists, othersie you could just look up the genre of any holdout artist in the relevant training set songs. We didn&#39;t catch this in time. Fortunately, no students predicted that this would happen, and the staff were good sports about not abusing this.</li>
 </ul>
 <p>Without further ado, let&#39;s take a look at the staff entries! A few of them have line breaks added to fit on the page, and should be removed for Tweeting/testing. As a final test, these classifiers were all required to be Tweeted out on <a href="https://twitter.com/tweetifiers">the official CS94 Tweetifiers Twitter account!</a></p>
-<h4 id="1.-silliness---36-characters,-82.46%-train,-81%-holdout"><a class="header-link" href="#1.-silliness---36-characters,-82.46%-train,-81%-holdout"></a>1. Silliness - 36 characters, 82.46% train, 81% holdout</h4>
-<pre class="hljs"><code><span class="hljs-keyword">lambda</span> r:(<span class="hljs-number">1</span>/min(filter(<span class="hljs-keyword">None</span>,r)))&gt;<span class="hljs-number">319</span> <span class="hljs-comment">#bigdata</span></code></pre><p>The original inspiration/proof-of-concept for the code golf idea. Remember how earlier I mentioned that word <em>frequencies</em> were given to the students instead of word <em>counts</em>? Well, that was because the using only the song length (in terms of words) was enough to distinguish between genres at about 80% accuracy, since most hip-hop songs are longer than country songs.</p>
+<h4 id="1-silliness---36-characters-8246-train-81-holdout"><a class="header-link" href="#1-silliness---36-characters-8246-train-81-holdout"></a>1. Silliness - 36 characters, 82.46% train, 81% holdout</h4>
+<pre class="hljs"><code><span class="hljs-keyword">lambda</span> r:(<span class="hljs-number">1</span>/<span class="hljs-built_in">min</span>(<span class="hljs-built_in">filter</span>(<span class="hljs-literal">None</span>,r)))&gt;<span class="hljs-number">319</span> <span class="hljs-comment">#bigdata</span></code></pre><p>The original inspiration/proof-of-concept for the code golf idea. Remember how earlier I mentioned that word <em>frequencies</em> were given to the students instead of word <em>counts</em>? Well, that was because the using only the song length (in terms of words) was enough to distinguish between genres at about 80% accuracy, since most hip-hop songs are longer than country songs.</p>
 <p>Thus, we tried to mask this by giving the frequencies instead. However, we (as well as a couple students) quickly realized that one could reverse engineer the song length from word frequencies under the mild assumption that each song has a word that only occurs once. This classifier does exactly that, and uses the split of 319 words that was determined best by cross-validation.</p>
 <p>The final version was golfed down from this initial prototype:</p>
-<pre class="hljs"><code><span class="hljs-keyword">lambda</span> x: [<span class="hljs-string">'Country'</span>,<span class="hljs-string">'Hip-hop'</span>][<span class="hljs-number">1</span>/np.min([z <span class="hljs-keyword">for</span> z <span class="hljs-keyword">in</span> x <span class="hljs-keyword">if</span> z&gt;<span class="hljs-number">0</span>]) &gt;= <span class="hljs-number">319</span>]</code></pre><h4 id="2.-hash-table---140-characters,-88%-train-83%-holdout"><a class="header-link" href="#2.-hash-table---140-characters,-88%-train-83%-holdout"></a>2. Hash table - 140 characters, 88% train 83% holdout</h4>
-<pre class="hljs"><code><span class="hljs-keyword">lambda</span> r:<span class="hljs-number">1</span>&lt;&lt;hash(r[<span class="hljs-number">1</span>])%<span class="hljs-number">1280</span>&amp;sum(ord(w)&lt;&lt;z*<span class="hljs-number">20</span><span class="hljs-keyword">for</span> w,z <span class="hljs-keyword">in</span> 
-zip(<span class="hljs-string">'𤠂򵈐₊𠐁𘈠񘄀򠐀򀰠,‐򄐂񀒀򒀄򀀠薀ࠁ񔣀刂耰󈀁䀰𤀀񀉆񁂂쐈𤀂萠򀐄Ј𥈁񀄀𠐠脄󀄀򄀒쀐𤀠񈀦ᠠÁ 𑄆𔀠񐀀⠌䐠򀤀򀀄ऀ𦀪@򀁄񥀱𔀀𨀈񀐀耑񠘐𗌄򔀰񘁔䐀'</span>,range(<span class="hljs-number">64</span>)))&gt;<span class="hljs-number">0</span></code></pre><p>This entry created a hash table/<a href="https://en.wikipedia.org/wiki/Bloom_filter">bloom filter</a> of the artists names. I was trying to create an example that overfit heavily to the training set, but as stated in the &quot;Caveats&quot; it turned out that most of the holdout set artists were also in the training set, so this one did relatively well. Let&#39;s take a look at how this works.</p>
-<pre class="hljs"><code><span class="hljs-number">1</span>&lt;&lt;hash(r[<span class="hljs-number">1</span>])%<span class="hljs-number">1280</span></code></pre><p>I first take the artist name string stored in <code>r[1]</code>, run it through my hash function (the built-in <code>hash</code> followed by <code>%1280</code>) to get an index, and then create the integer with the index bit set to 1. This number represents the location we will be checking in the hash table—that long string of gibberish characters.</p>
-<pre class="hljs"><code>sum(ord(w)&lt;&lt;z*<span class="hljs-number">20</span><span class="hljs-keyword">for</span> w,z <span class="hljs-keyword">in</span> 
-zip(<span class="hljs-string">'𤠂򵈐₊𠐁𘈠񘄀򠐀򀰠,‐򄐂񀒀򒀄򀀠薀ࠁ񔣀刂耰󈀁䀰𤀀񀉆񁂂쐈𤀂萠򀐄Ј𥈁񀄀𠐠脄󀄀򄀒쀐𤀠񈀦ᠠÁ 𑄆𔀠񐀀⠌䐠򀤀򀀄ऀ𦀪@򀁄񥀱𔀀𨀈񀐀耑񠘐𗌄򔀰񘁔䐀'</span>,range(<span class="hljs-number">64</span>)))</code></pre><p>This section takes the hash table stored as a string and unpacks it into a very big integer. Each character in the long string stores 20 bits of the table. To recreate the table, we convert each character to a number with <code>ord</code> and then shift it the appropriate number of bits (i.e. shift the 2nd character 20 bits, the 3rd 40 bits and so on), and then sum them up to get a 20*64=1280 bit number. I spent a lot of time trying to golf this one down (using things like <code>map</code> and implicit NumPy array operations), but this is the best I came up with.</p>
+<pre class="hljs"><code><span class="hljs-keyword">lambda</span> x: [<span class="hljs-string">&#x27;Country&#x27;</span>,<span class="hljs-string">&#x27;Hip-hop&#x27;</span>][<span class="hljs-number">1</span>/np.<span class="hljs-built_in">min</span>([z <span class="hljs-keyword">for</span> z <span class="hljs-keyword">in</span> x <span class="hljs-keyword">if</span> z&gt;<span class="hljs-number">0</span>]) &gt;= <span class="hljs-number">319</span>]</code></pre><h4 id="2-hash-table---140-characters-88-train-83-holdout"><a class="header-link" href="#2-hash-table---140-characters-88-train-83-holdout"></a>2. Hash table - 140 characters, 88% train 83% holdout</h4>
+<pre class="hljs"><code><span class="hljs-keyword">lambda</span> r:<span class="hljs-number">1</span>&lt;&lt;<span class="hljs-built_in">hash</span>(r[<span class="hljs-number">1</span>])%<span class="hljs-number">1280</span>&amp;<span class="hljs-built_in">sum</span>(<span class="hljs-built_in">ord</span>(w)&lt;&lt;z*20<span class="hljs-keyword">for</span> w,z <span class="hljs-keyword">in</span> 
+<span class="hljs-built_in">zip</span>(<span class="hljs-string">&#x27;𤠂򵈐₊𠐁𘈠񘄀򠐀򀰠,‐򄐂񀒀򒀄򀀠薀ࠁ񔣀刂耰󈀁䀰𤀀񀉆񁂂쐈𤀂萠򀐄Ј𥈁񀄀𠐠脄󀄀򄀒쀐𤀠񈀦ᠠÁ 𑄆𔀠񐀀⠌䐠򀤀򀀄ऀ𦀪@򀁄񥀱𔀀𨀈񀐀耑񠘐𗌄򔀰񘁔䐀&#x27;</span>,<span class="hljs-built_in">range</span>(<span class="hljs-number">64</span>)))&gt;<span class="hljs-number">0</span></code></pre><p>This entry created a hash table/<a href="https://en.wikipedia.org/wiki/Bloom_filter">bloom filter</a> of the artists names. I was trying to create an example that overfit heavily to the training set, but as stated in the &quot;Caveats&quot; it turned out that most of the holdout set artists were also in the training set, so this one did relatively well. Let&#39;s take a look at how this works.</p>
+<pre class="hljs"><code><span class="hljs-number">1</span>&lt;&lt;<span class="hljs-built_in">hash</span>(r[<span class="hljs-number">1</span>])%<span class="hljs-number">1280</span></code></pre><p>I first take the artist name string stored in <code>r[1]</code>, run it through my hash function (the built-in <code>hash</code> followed by <code>%1280</code>) to get an index, and then create the integer with the index bit set to 1. This number represents the location we will be checking in the hash table—that long string of gibberish characters.</p>
+<pre class="hljs"><code><span class="hljs-built_in">sum</span>(<span class="hljs-built_in">ord</span>(w)&lt;&lt;z*20<span class="hljs-keyword">for</span> w,z <span class="hljs-keyword">in</span> 
+<span class="hljs-built_in">zip</span>(<span class="hljs-string">&#x27;𤠂򵈐₊𠐁𘈠񘄀򠐀򀰠,‐򄐂񀒀򒀄򀀠薀ࠁ񔣀刂耰󈀁䀰𤀀񀉆񁂂쐈𤀂萠򀐄Ј𥈁񀄀𠐠脄󀄀򄀒쀐𤀠񈀦ᠠÁ 𑄆𔀠񐀀⠌䐠򀤀򀀄ऀ𦀪@򀁄񥀱𔀀𨀈񀐀耑񠘐𗌄򔀰񘁔䐀&#x27;</span>,<span class="hljs-built_in">range</span>(<span class="hljs-number">64</span>)))</code></pre><p>This section takes the hash table stored as a string and unpacks it into a very big integer. Each character in the long string stores 20 bits of the table. To recreate the table, we convert each character to a number with <code>ord</code> and then shift it the appropriate number of bits (i.e. shift the 2nd character 20 bits, the 3rd 40 bits and so on), and then sum them up to get a 20*64=1280 bit number. I spent a lot of time trying to golf this one down (using things like <code>map</code> and implicit NumPy array operations), but this is the best I came up with.</p>
 <p>Finally, we check to see if the artist is in the hash table by <code>&amp;</code>ing the two numbers together and returning <code>True</code> if the result is not zero.</p>
 <p>How did we create the hash table from the training data? The snippet below created a hash table with bits set to 1 if the song of the hashed artist was tagged as &#39;hip-hop&#39;:</p>
 <pre class="hljs"><code>tlen = <span class="hljs-number">1280</span>
 hashes = []
 <span class="hljs-keyword">for</span> r <span class="hljs-keyword">in</span> train_lyrics.values[:,<span class="hljs-number">1</span>:]:
-    hashes.append(hash(r[<span class="hljs-number">1</span>]) % tlen)
+    hashes.append(<span class="hljs-built_in">hash</span>(r[<span class="hljs-number">1</span>]) % tlen)
 htable = <span class="hljs-number">0</span>
-hh = train_lyrics[<span class="hljs-string">'Genre'</span>] == <span class="hljs-string">'Hip-hop'</span>
-<span class="hljs-keyword">for</span> (i,h) <span class="hljs-keyword">in</span> enumerate(hashes):
+hh = train_lyrics[<span class="hljs-string">&#x27;Genre&#x27;</span>] == <span class="hljs-string">&#x27;Hip-hop&#x27;</span>
+<span class="hljs-keyword">for</span> (i,h) <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(hashes):
     <span class="hljs-keyword">if</span> hh[i]:
         htable = (<span class="hljs-number">1</span> &lt;&lt; h) | htable</code></pre><p>As with any hash table, there will be some proportion of collisions based on the size of the table. For the chosen size of 1280 (based on the 64  available characters for storing the hash table string after all other syntax was golfed and taken into account), the 374 unique artists in the training set led to an integer with 325 bits set to 1, a collision rate of about 13%.</p>
 <h4 id="a-slight-bending-of-the-rules"><a class="header-link" href="#a-slight-bending-of-the-rules"></a>A Slight Bending of the Rules</h4>
 <p>Remember my late addition to the rules concerning Python environment variables? Well, thanks to <a href="http://stackoverflow.com/questions/27522626/hash-function-in-python-3-3-returns-different-results-between-sessions">a change implemented in Python 3.3</a>, the seed for the <code>hash()</code> function is randomly set at the start of each Python process. This behavior can be changed by modifying the <code>PYTHONHASHSEED</code> environment variable.</p>
 <p>Without turning off this behavior, I would have created a hash table under one seed and then come test time, would be hashing the holdout artists&#39; names with a different random seed, leading to garbage results. Thus, I added the final rule in the TA handicap to skirt around this issue. Obviously, full exploitation of the rule could result in storing arbitrary amounts of data inside environment variables, but I (the unchecked judge, jury, and executioner of the whole competition) felt my exception was within the spirit of the challenge. Plus, bending the rules is a <a href="http://www0.us.ioccc.org/1994/smr.hint">code golf tradition</a>!</p>
-<h4 id="3.-sparse-linear-classifier---137-characters,-80.33%-train-84%-holdout"><a class="header-link" href="#3.-sparse-linear-classifier---137-characters,-80.33%-train-84%-holdout"></a>3. Sparse Linear Classifier - 137 characters, 80.33% train 84% holdout</h4>
-<pre class="hljs"><code><span class="hljs-keyword">lambda</span> a: sum([a[ord(i)&gt;&gt;<span class="hljs-number">7</span>]*((<span class="hljs-number">0.285</span>*(ord(i)%<span class="hljs-number">128</span>))+<span class="hljs-number">-15.14</span>) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> 
-<span class="hljs-string">"ૂପழౌಾඬ໤གྲႳᄽᆨማውፊᎣᒴᔸ᚞᝖ᠫᤲᭌᮒ᰻ḜềἮῌ≇⏕┷⛒⦺⪀⪶ⱋㆵ㒰㷸㼾䂵䅍䈲䊘䒸䛘䤵䪹䴨仓哆嚀埈墎娫急溥牞稳笪籢螶"</span>])&gt;<span class="hljs-number">0</span></code></pre><p>This is a sparse linear classifier with fixed-precision weights. The index of each feature is stored in the high 13 bits of each character, and the weight in the low 9 bits.</p>
-<pre class="hljs"><code>(<span class="hljs-number">0.285</span>*(ord(i)%<span class="hljs-number">128</span>))+<span class="hljs-number">-15.14</span></code></pre><p>This operation simply shifts the weight range from [0-127] to about [-15,21].We perform a dot product of the input vector with this weight vector by unpacking the index/coefficient pair stored in each character.</p>
+<h4 id="3-sparse-linear-classifier---137-characters-8033-train-84-holdout"><a class="header-link" href="#3-sparse-linear-classifier---137-characters-8033-train-84-holdout"></a>3. Sparse Linear Classifier - 137 characters, 80.33% train 84% holdout</h4>
+<pre class="hljs"><code><span class="hljs-keyword">lambda</span> a: <span class="hljs-built_in">sum</span>([a[<span class="hljs-built_in">ord</span>(i)&gt;&gt;<span class="hljs-number">7</span>]*((<span class="hljs-number">0.285</span>*(<span class="hljs-built_in">ord</span>(i)%<span class="hljs-number">128</span>))+-<span class="hljs-number">15.14</span>) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> 
+<span class="hljs-string">&quot;ૂପழౌಾඬ໤གྲႳᄽᆨማውፊᎣᒴᔸ᚞᝖ᠫᤲᭌᮒ᰻ḜềἮῌ≇⏕┷⛒⦺⪀⪶ⱋㆵ㒰㷸㼾䂵䅍䈲䊘䒸䛘䤵䪹䴨仓哆嚀埈墎娫急溥牞稳笪籢螶&quot;</span>])&gt;<span class="hljs-number">0</span></code></pre><p>This is a sparse linear classifier with fixed-precision weights. The index of each feature is stored in the high 13 bits of each character, and the weight in the low 9 bits.</p>
+<pre class="hljs"><code>(<span class="hljs-number">0.285</span>*(<span class="hljs-built_in">ord</span>(i)%<span class="hljs-number">128</span>))+-<span class="hljs-number">15.14</span></code></pre><p>This operation simply shifts the weight range from [0-127] to about [-15,21].We perform a dot product of the input vector with this weight vector by unpacking the index/coefficient pair stored in each character.</p>
 <p>From the creator, my colleague Evan Sparks:</p>
 <blockquote>
 <p>I reasoned that given the hard limit of 140 characters for both the model and the code to apply it, I would need a model that was both compact and straightforward to apply. A natural candidate was L1-Regularized Linear Regression AKA Lasso - Lasso has the benefit of encouraging sparsity in the model parameters as well as being straightforward to apply. I sketched out some code for applying my model: </p>
 <p>lambda x: sum([x[i]*w for i,w in model]) &gt; 0</p>
+</blockquote>
 <p>which computes the dot product of the sparse model and the feature vector.Given that all the code around &quot;model&quot; would have to be fixed, I reasoned that I had about 100 characters left. I opted for a bit packing scheme which encoded the offset in the feature vector into the highest 9 bits of each unicode character, and the weight into the lowest 7 bits.</p>
+<blockquote>
+</blockquote>
 <p>There were a few bytes spent on unpacking, as well as some wasted precision, but this meant that I could fit about 70 model parameters in the final tweet.
 This 9/7 ratio was determined empirically to give enough access to the feature space without losing too much precision on the parameter weight.</p>
-<p>A couple hundred parameters would have been optimal, but this was enough to achieve performance that was better than a really simple strategy that looked for the presence of a small handful of words.</p>
-</blockquote>
-<h4 id="4.-neural-net---140-characters,-71.7%-train-70%-holdout"><a class="header-link" href="#4.-neural-net---140-characters,-71.7%-train-70%-holdout"></a>4. Neural Net - 140 characters, 71.7% train 70% holdout</h4>
-<pre class="hljs"><code><span class="hljs-keyword">lambda</span> r:sum(np.tanh(sum(r[c%<span class="hljs-number">8192</span>]*(<span class="hljs-number">2</span>*(c&gt;&gt;<span class="hljs-number">19</span>)<span class="hljs-number">-1</span>)*<span class="hljs-number">1.4</span>**-(c&gt;&gt;<span class="hljs-number">13</span>&amp;<span class="hljs-number">63</span>)<span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> map(ord,w)))<span class="hljs-keyword">for</span> w <span class="hljs-keyword">in</span>
-[<span class="hljs-string">"񐀀񘀄񎀅񔀻񪁩򴂲"</span>,<span class="hljs-string">"񐀀񘀄񎀅񔀻𦁐񪁩򦂭򼅍򸒥"</span>,<span class="hljs-string">"񐀀񘀄񎀅񔀻񪁩򰃙򺄟򸋙򴎣"</span>,<span class="hljs-string">"񐀀񘀄񎀅񔀻񪁩𴃍"</span>])&gt;<span class="hljs-number">0</span></code></pre><p>From the creator and current TA of CS C8, Henry Milner:</p>
 <blockquote>
-<p>My classifier is a 2-layer neural network with tanh activations and an output node that is fixed to sum its inputs (so it has no parameters).  The training objective was the hinge loss plus L2 and L1 regularization.  I trained with batch stochastic gradient descent using Theano.   (After the training objective stopped changing, I chose the best model I’d seen in terms of held-out accuracy, which is another kind of regularization.)  I used iterative soft shrinkage for the L1 term to ensure the weights were actually sparse, though I’m not sure I’d recommend that approach.  I had to muck around with the step size and regularization parameters to get a reasonable network with the right degree of sparsity; if I’d spent the time to do a more systematic sweep of those hyperparameters, I suspect the network would have turned out better.  I encoded the weights as key/value pairs: Each 20-bit Unicode character uses 13 bits to encode the feature for which it’s a weight and 7 bits for the weight.  The weights turned out to be roughly uniform in log scale, so I encoded them with 1 sign bit and 6 magnitude bits.  This is a lossy encoding of the weights, but it didn’t turn out to increase the held-out error, so that seemed okay.</p>
 </blockquote>
-<h4 id="5.-recursive-decision-tree---140-characters,-72.87%-train-80%-holdout"><a class="header-link" href="#5.-recursive-decision-tree---140-characters,-72.87%-train-80%-holdout"></a>5. Recursive Decision Tree - 140 characters, 72.87% train 80% holdout</h4>
-<pre class="hljs"><code>(<span class="hljs-keyword">lambda</span> f:<span class="hljs-keyword">lambda</span> x:f(f,x,<span class="hljs-string">'ᔱ𤚲 '</span>,<span class="hljs-number">173</span>,<span class="hljs-number">1</span>))(<span class="hljs-keyword">lambda</span> t,r,s,i,p:
-(<span class="hljs-keyword">lambda</span> n,Q:(p^Q+<span class="hljs-number">1</span>)*(p&gt;<span class="hljs-number">9</span>)<span class="hljs-keyword">or</span> t(t,r,s[p*Q+<span class="hljs-number">1</span>:],n(s[p*Q])&gt;&gt;<span class="hljs-number">5</span>,n(s[p*Q])&amp;<span class="hljs-number">31</span>))(ord,r[i]&gt;<span class="hljs-number">0</span>))</code></pre><p>This was probably my most ambitious attempt (but unfortunately the worst-performing). I implemented a <a href="https://en.wikipedia.org/wiki/Decision_tree">decision tree</a> as a recursive anonymous function. Using ideas from <a href="https://en.wikipedia.org/wiki/Lambda_calculus">lambda calculus</a>, a recursive anonymous function can be created in Python by first making a higher-order anonymous function that &quot;recursivizes&quot; your desired function. For example, a (poor) way to compute the Nth triangular number:</p>
+<p>A couple hundred parameters would have been optimal, but this was enough to achieve performance that was better than a really simple strategy that looked for the presence of a small handful of words.</p>
+<h4 id="4-neural-net---140-characters-717-train-70-holdout"><a class="header-link" href="#4-neural-net---140-characters-717-train-70-holdout"></a>4. Neural Net - 140 characters, 71.7% train 70% holdout</h4>
+<pre class="hljs"><code><span class="hljs-keyword">lambda</span> r:<span class="hljs-built_in">sum</span>(np.tanh(<span class="hljs-built_in">sum</span>(r[c%<span class="hljs-number">8192</span>]*(<span class="hljs-number">2</span>*(c&gt;&gt;<span class="hljs-number">19</span>)-<span class="hljs-number">1</span>)*<span class="hljs-number">1.4</span>**-(c&gt;&gt;<span class="hljs-number">13</span>&amp;<span class="hljs-number">63</span>)<span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> <span class="hljs-built_in">map</span>(<span class="hljs-built_in">ord</span>,w)))<span class="hljs-keyword">for</span> w <span class="hljs-keyword">in</span>
+[<span class="hljs-string">&quot;񐀀񘀄񎀅񔀻񪁩򴂲&quot;</span>,<span class="hljs-string">&quot;񐀀񘀄񎀅񔀻𦁐񪁩򦂭򼅍򸒥&quot;</span>,<span class="hljs-string">&quot;񐀀񘀄񎀅񔀻񪁩򰃙򺄟򸋙򴎣&quot;</span>,<span class="hljs-string">&quot;񐀀񘀄񎀅񔀻񪁩𴃍&quot;</span>])&gt;<span class="hljs-number">0</span></code></pre><p>From the creator and current TA of CS C8, Henry Milner:</p>
+<blockquote>
+<p>My classifier is a 2-layer neural network with tanh activations and an output node that is fixed to sum its inputs (so it has no parameters).  The training objective was the hinge loss plus L2 and L1 regularization.  I trained with batch stochastic gradient descent using Theano.   (After the training objective stopped changing, I chose the best model I’d seen in terms of held-out accuracy, which is another kind of regularization.)  I used iterative soft shrinkage for the L1 term to ensure the weights were actually sparse, though I’m not sure I’d recommend that approach.  I had to muck around with the step size and regularization parameters to get a reasonable network with the right degree of sparsity; if I’d spent the time to do a more systematic sweep of those hyperparameters, I suspect the network would have turned out better.  I encoded the weights as key/value pairs: Each 20-bit Unicode character uses 13 bits to encode the feature for which it’s a weight and 7 bits for the weight.  The weights turned out to be roughly uniform in log scale, so I encoded them with 1 sign bit and 6 magnitude bits.  This is a lossy encoding of the weights, but it didn’t turn out to increase the held-out error, so that seemed okay.</p>
+</blockquote>
+<h4 id="5-recursive-decision-tree---140-characters-7287-train-80-holdout"><a class="header-link" href="#5-recursive-decision-tree---140-characters-7287-train-80-holdout"></a>5. Recursive Decision Tree - 140 characters, 72.87% train 80% holdout</h4>
+<pre class="hljs"><code>(<span class="hljs-keyword">lambda</span> f:<span class="hljs-keyword">lambda</span> x:f(f,x,<span class="hljs-string">&#x27;ᔱ𤚲 &#x27;</span>,<span class="hljs-number">173</span>,<span class="hljs-number">1</span>))(<span class="hljs-keyword">lambda</span> t,r,s,i,p:
+(<span class="hljs-keyword">lambda</span> n,Q:(p^Q+<span class="hljs-number">1</span>)*(p&gt;<span class="hljs-number">9</span>)<span class="hljs-keyword">or</span> t(t,r,s[p*Q+<span class="hljs-number">1</span>:],n(s[p*Q])&gt;&gt;<span class="hljs-number">5</span>,n(s[p*Q])&amp;<span class="hljs-number">31</span>))(<span class="hljs-built_in">ord</span>,r[i]&gt;<span class="hljs-number">0</span>))</code></pre><p>This was probably my most ambitious attempt (but unfortunately the worst-performing). I implemented a <a href="https://en.wikipedia.org/wiki/Decision_tree">decision tree</a> as a recursive anonymous function. Using ideas from <a href="https://en.wikipedia.org/wiki/Lambda_calculus">lambda calculus</a>, a recursive anonymous function can be created in Python by first making a higher-order anonymous function that &quot;recursivizes&quot; your desired function. For example, a (poor) way to compute the Nth triangular number:</p>
 <pre class="hljs"><code>triangle = (<span class="hljs-keyword">lambda</span> g:<span class="hljs-keyword">lambda</span> x:g(g,x)) 
 <span class="hljs-comment"># Takes a function g(.) and returns recursive </span>
 <span class="hljs-comment"># version with itself as the first argument</span>
-    (<span class="hljs-keyword">lambda</span> f,y: <span class="hljs-number">1</span> <span class="hljs-keyword">if</span> y==<span class="hljs-number">1</span> <span class="hljs-keyword">else</span> y + f(f,y<span class="hljs-number">-1</span>))
+    (<span class="hljs-keyword">lambda</span> f,y: <span class="hljs-number">1</span> <span class="hljs-keyword">if</span> y==<span class="hljs-number">1</span> <span class="hljs-keyword">else</span> y + f(f,y-<span class="hljs-number">1</span>))
 
 triangle(<span class="hljs-number">5</span>) <span class="hljs-comment">#returns 15</span></code></pre><h5 id="de-golfed"><a class="header-link" href="#de-golfed"></a>De-golfed</h5>
 <p>To have any hope of deciphering this tweetifier, let&#39;s look at a de-golfed version.</p>
-<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">dt</span><span class="hljs-params">(row, string=<span class="hljs-string">'ᔱ𤚲 '</span>, index=<span class="hljs-number">173</span>, pointer=<span class="hljs-number">1</span>)</span>:</span>
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">dt</span>(<span class="hljs-params">row, string=<span class="hljs-string">&#x27;ᔱ𤚲 &#x27;</span>, index=<span class="hljs-number">173</span>, pointer=<span class="hljs-number">1</span></span>):</span>
 
     <span class="hljs-keyword">if</span> pointer &gt; <span class="hljs-number">9</span>: <span class="hljs-comment">#We are at a leaf node</span>
         right = row[index]&gt;<span class="hljs-number">0</span>
@@ -164,8 +167,8 @@ triangle(<span class="hljs-number">5</span>) <span class="hljs-comment">#returns
             shift = <span class="hljs-number">0</span>
 
         n_string = string[shift+<span class="hljs-number">1</span>:]
-        n_index = ord(string[shift])&gt;&gt;<span class="hljs-number">5</span>   <span class="hljs-comment">#High 13 bits</span>
-        n_pointer = ord(string[shift])&amp;<span class="hljs-number">13</span> <span class="hljs-comment">#Low 5 bits</span>
+        n_index = <span class="hljs-built_in">ord</span>(string[shift])&gt;&gt;<span class="hljs-number">5</span>   <span class="hljs-comment">#High 13 bits</span>
+        n_pointer = <span class="hljs-built_in">ord</span>(string[shift])&amp;<span class="hljs-number">13</span> <span class="hljs-comment">#Low 5 bits</span>
 
         <span class="hljs-keyword">return</span> dt(row,n_string,n_index,n_pointer)</code></pre><p>The function <code>dt</code> takes in 1) the test row of word frequencies, 2) a string containing the remaining portion of the decision tree, 3) the current feature to split on, and 4) a pointer to start of the left subtree in <code>string</code> (the right one starts at the beginning of the string).</p>
 <p>If we are currently at a leaf node, we split on the final feature and output the predicted class (in the form of a 16 or a 19). Else, we recursively call the function with the new subtree and extract the new feature index and pointer from the relevant character.</p>
@@ -181,9 +184,9 @@ triangle(<span class="hljs-number">5</span>) <span class="hljs-comment">#returns
 </p>
 
 <p>The tree was trained using the <code>scikit-learn</code> package, using 10-fold cross validation to choose parameters. While I felt that this was the coolest entry, it was definitely not the best-performing.</p>
-<h4 id="6.-decision-tree---98-characters,-88.57%-train-88%-holdout"><a class="header-link" href="#6.-decision-tree---98-characters,-88.57%-train-88%-holdout"></a>6. Decision Tree - 98 characters, 88.57% train 88% holdout</h4>
+<h4 id="6-decision-tree---98-characters-8857-train-88-holdout"><a class="header-link" href="#6-decision-tree---98-characters-8857-train-88-holdout"></a>6. Decision Tree - 98 characters, 88.57% train 88% holdout</h4>
 <pre class="hljs"><code><span class="hljs-keyword">lambda</span> r:[(r[<span class="hljs-number">41</span>]+r[<span class="hljs-number">173</span>]+r[<span class="hljs-number">225</span>]+r[<span class="hljs-number">785</span>])&gt;<span class="hljs-number">0</span>,(r[<span class="hljs-number">173</span>]==<span class="hljs-number">0</span> <span class="hljs-keyword">and</span> r[<span class="hljs-number">887</span>]&gt;<span class="hljs-number">0</span>)==<span class="hljs-number">0</span>]
-[(<span class="hljs-number">1</span>/min(filter(<span class="hljs-keyword">None</span>,r)))&gt;<span class="hljs-number">319</span>]</code></pre><p>The winner of the classification challenge! A hard-coded decision tree trained using <code>scikit-learn</code> which included the very predictive song length feature  as seen in classifier #1. The tree is shown below (with song length as appended feature 4976). Notable words split on were &quot;yo&quot;, &quot;guitar&quot;, &quot;rap&quot;, &quot;old&quot;, and &quot;da&quot;.</p>
+[(<span class="hljs-number">1</span>/<span class="hljs-built_in">min</span>(<span class="hljs-built_in">filter</span>(<span class="hljs-literal">None</span>,r)))&gt;<span class="hljs-number">319</span>]</code></pre><p>The winner of the classification challenge! A hard-coded decision tree trained using <code>scikit-learn</code> which included the very predictive song length feature  as seen in classifier #1. The tree is shown below (with song length as appended feature 4976). Notable words split on were &quot;yo&quot;, &quot;guitar&quot;, &quot;rap&quot;, &quot;old&quot;, and &quot;da&quot;.</p>
 <p align="center">
   <img src="hardtree.png" title="The winner!"/>
 </p>
@@ -200,52 +203,50 @@ triangle(<span class="hljs-number">5</span>) <span class="hljs-comment">#returns
 <table>
 <thead>
 <tr>
-<th style="text-align:left">Classifier</th>
-<th style="text-align:center">Features</th>
-<th style="text-align:center">Country</th>
-<th style="text-align:center">Hip-Hop</th>
+<th align="left">Classifier</th>
+<th align="center">Features</th>
+<th align="center">Country</th>
+<th align="center">Hip-Hop</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td style="text-align:left">1. Silly</td>
-<td style="text-align:center">words</td>
-<td style="text-align:center">False</td>
-<td style="text-align:center">True</td>
+<tbody><tr>
+<td align="left">1. Silly</td>
+<td align="center">words</td>
+<td align="center">False</td>
+<td align="center">True</td>
 </tr>
 <tr>
-<td style="text-align:left">2. Hash</td>
-<td style="text-align:center">meta, words</td>
-<td style="text-align:center">False</td>
-<td style="text-align:center">True</td>
+<td align="left">2. Hash</td>
+<td align="center">meta, words</td>
+<td align="center">False</td>
+<td align="center">True</td>
 </tr>
 <tr>
-<td style="text-align:left">3. Linear</td>
-<td style="text-align:center">index, meta, words</td>
-<td style="text-align:center">True</td>
-<td style="text-align:center">False</td>
+<td align="left">3. Linear</td>
+<td align="center">index, meta, words</td>
+<td align="center">True</td>
+<td align="center">False</td>
 </tr>
 <tr>
-<td style="text-align:left">4. NN</td>
-<td style="text-align:center">words</td>
-<td style="text-align:center">False</td>
-<td style="text-align:center">True</td>
+<td align="left">4. NN</td>
+<td align="center">words</td>
+<td align="center">False</td>
+<td align="center">True</td>
 </tr>
 <tr>
-<td style="text-align:left">5. Rec DT</td>
-<td style="text-align:center">words</td>
-<td style="text-align:center">16</td>
-<td style="text-align:center">19</td>
+<td align="left">5. Rec DT</td>
+<td align="center">words</td>
+<td align="center">16</td>
+<td align="center">19</td>
 </tr>
 <tr>
-<td style="text-align:left">6. DT</td>
-<td style="text-align:center">words</td>
-<td style="text-align:center">False</td>
-<td style="text-align:center">True</td>
+<td align="left">6. DT</td>
+<td align="center">words</td>
+<td align="center">False</td>
+<td align="center">True</td>
 </tr>
-</tbody>
-</table>
-<p>Feel free to send any questions or comments to boczar@berkeley.edu.</p>
+</tbody></table>
+<p>Feel free to send any questions or comments to <a href="mailto:&#98;&#111;&#x63;&#x7a;&#97;&#114;&#x40;&#x62;&#x65;&#114;&#107;&#101;&#x6c;&#x65;&#x79;&#46;&#101;&#x64;&#x75;">&#98;&#111;&#x63;&#x7a;&#97;&#114;&#x40;&#x62;&#x65;&#114;&#107;&#101;&#x6c;&#x65;&#x79;&#46;&#101;&#x64;&#x75;</a>.</p>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -255,6 +256,5 @@ triangle(<span class="hljs-number">5</span>) <span class="hljs-comment">#returns
   ga('create', 'UA-61449337-1', 'auto');
   ga('send', 'pageview');
 
-</script>    </article>
-  </body>
+</script></body>
 </html>
