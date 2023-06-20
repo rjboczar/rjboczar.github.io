@@ -37,8 +37,8 @@ MathJax.Hub.Queue(function() {
 <p>Since the end of the class started getting into topics like prediction and estimation, the final project given to the students was binary song genre classification. The students were given an array of word frequencies (more on that later) with corresponding genres--each song was labeled either &quot;Hip-hop&quot; or &quot;Country&quot;. The project involved a guided exploration (including the construction of a simple <a href="https://en.wikipedia.org/wiki/Nearest_neighbour_classifiers">nearest-neighbor classifier</a>) of what features (i.e. words) were most predictive of genre.</p>
 <p>We then held a mini-competition for the students. An optional portion of the final project was to create the best possible classifier using any possible technique. The classifiers would be submitted be a due date, and I would then evaluate them on an unseen (to both the staff and the students) holdout set. The student with the highest prediction accuracy on the holdout set would then be declared the winner.</p>
 <p>Naturally, being the competitive <del>jerk</del> person that I am, I tried to figure out a way I, the TA, could weasel my way into this competition. Obviously, having years of programming and machine learning experience would make it a bit unfair, so I had to come up with a suitable handicap.</p>
-<p align="center">
-  <img src="dumbobfuscation.png" title="YOU HAVE SELECTED: POWER DRIVE"/>
+<p align="center" width="100%">
+  <img width="90%" src="dumbobfuscation.png" title="YOU HAVE SELECTED: POWER DRIVE"/>
 </p>
 
 <p>This nice illustration represents my solution. I have always been fascinated by what I categorize as &quot;dumb fun coding stuff&quot; and am a frequent lurker of <a href="http://codegolf.stackexchange.com">codegolf.stackexchange</a> (for the uninitiated, &quot;<a href="https://en.wikipedia.org/wiki/Code_golf">code golf</a>&quot; is the game of trying to accomplish a programming task in as few characters or bytes as possible). Thus, after some iteration, I came up with the following Staff/TA classifier handicap rules:</p>
@@ -81,8 +81,8 @@ x_as_string = num_to_bytes(x)[::-<span class="hljs-number">1</span>]</code></pre
 <p>Many of the staff tweet classifiers had to explore the tradeoff between expressiveness (more characters devoted to code) and model complexity. There was often another tradeoff between bits of precision used to specify constants (say, feature weights) and the number of constants you could fit in the model. Having to trade apples for oranges and testing out different configurations was really interesting--for example is a <code>np.tanh()</code> call worth 9 fewer features in your model?</p>
 <h3 id="competition-results"><a class="header-link" href="#competition-results"></a>Competition Results</h3>
 <p>Before we go into each staff entry, let&#39;s take a look at how they performed vs. the student entries.</p>
-<p align="center">
-  <img src="classresults.png" title="I win!"/>
+<p align="center" width="100%">
+  <img width="90%" src="classresults.png" title="I win!"/>
 </p>
 
 <p>As you can see, the handicap I set in place was reasonable!. Though the students seemed to overfit a bit more, the test set scores were comparable. One thing to note is that in a class of ~120, there were only 8 entries. In reality, there were about 15-20 entries, and I could only get 8 of them to run without error after no or small modifications.</p>
@@ -181,16 +181,16 @@ triangle(<span class="hljs-number">5</span>) <span class="hljs-comment">#returns
 <li>It only splits on the presence of words, not on any threshold for frequency, as that would have required more bits per character or doing something more clever.</li>
 <li>The best one---all the tree logic barely left any room for a tree! The tree represented by the 3-character string and default inputs is shown below. The splits are on the word stems &quot;yo&quot;,&quot;ya&quot;, and &quot;cor&quot;.</li>
 </ol>
-<p align="center">
-  <img src="rectree.png" title="Not very big!"/>
+<p align="center" width="100%">
+  <img width="90%" src="rectree.png" title="Not very big!"/>
 </p>
 
 <p>The tree was trained using the <code>scikit-learn</code> package, using 10-fold cross validation to choose parameters. While I felt that this was the coolest entry, it was definitely not the best-performing.</p>
 <h4 id="6-decision-tree---98-characters-8857-train-88-holdout"><a class="header-link" href="#6-decision-tree---98-characters-8857-train-88-holdout"></a>6. Decision Tree - 98 characters, 88.57% train 88% holdout</h4>
 <pre class="hljs"><code><span class="hljs-keyword">lambda</span> r:[(r[<span class="hljs-number">41</span>]+r[<span class="hljs-number">173</span>]+r[<span class="hljs-number">225</span>]+r[<span class="hljs-number">785</span>])&gt;<span class="hljs-number">0</span>,(r[<span class="hljs-number">173</span>]==<span class="hljs-number">0</span> <span class="hljs-keyword">and</span> r[<span class="hljs-number">887</span>]&gt;<span class="hljs-number">0</span>)==<span class="hljs-number">0</span>]
 [(<span class="hljs-number">1</span>/<span class="hljs-built_in">min</span>(<span class="hljs-built_in">filter</span>(<span class="hljs-literal">None</span>,r)))&gt;<span class="hljs-number">319</span>]</code></pre><p>The winner of the classification challenge! A hard-coded decision tree trained using <code>scikit-learn</code> which included the very predictive song length feature  as seen in classifier #1. The tree is shown below (with song length as appended feature 4976). Notable words split on were &quot;yo&quot;, &quot;guitar&quot;, &quot;rap&quot;, &quot;old&quot;, and &quot;da&quot;.</p>
-<p align="center">
-  <img src="hardtree.png" title="The winner!"/>
+<p align="center" width="100%">
+  <img width="90%" src="hardtree.png" title="The winner!"/>
 </p>
 
 <p>Again, I used 10-fold cross validation to set the maximum depth of the tree. I then had to stare at the above table and come up with a compact Boolean representation (though in this case I had a lot of room to spare). A larger tree would have required some <a href="https://en.wikipedia.org/wiki/Karnaugh_map">Karnaugh map</a>-esque trickery.</p>
@@ -248,7 +248,7 @@ triangle(<span class="hljs-number">5</span>) <span class="hljs-comment">#returns
 <td align="center">True</td>
 </tr>
 </tbody></table>
-<p>Feel free to send any questions or comments to <a href="mailto:&#98;&#111;&#99;&#x7a;&#x61;&#x72;&#64;&#98;&#x65;&#114;&#x6b;&#x65;&#x6c;&#x65;&#x79;&#x2e;&#x65;&#100;&#117;">&#98;&#111;&#99;&#x7a;&#x61;&#x72;&#64;&#98;&#x65;&#114;&#x6b;&#x65;&#x6c;&#x65;&#x79;&#x2e;&#x65;&#100;&#117;</a>.</p>
+<p>Feel free to send any questions or comments to <a href="mailto:&#98;&#111;&#x63;&#122;&#97;&#x72;&#x40;&#98;&#101;&#114;&#107;&#x65;&#x6c;&#x65;&#x79;&#x2e;&#101;&#x64;&#x75;">&#98;&#111;&#x63;&#122;&#97;&#x72;&#x40;&#98;&#101;&#114;&#107;&#x65;&#x6c;&#x65;&#x79;&#x2e;&#101;&#x64;&#x75;</a>.</p>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
